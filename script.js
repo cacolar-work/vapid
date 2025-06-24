@@ -17,6 +17,7 @@ if ('serviceWorker' in navigator) {
             dom.loading.classList.add('d-none')
             dom.btn.classList.remove('d-none')
             dom.btn.onclick = _ => {
+		dom.btn.disabled = true
                 reg.pushManager.subscribe(options)
                     .then(async subscription => {
                         console.log('User Subscription:', subscription);
@@ -27,11 +28,11 @@ if ('serviceWorker' in navigator) {
 				method: 'POST',
 				body: form
 			})
-			window.location.href = `${host}/vapid/${uid}`
+			//window.location.href = `${host}/vapid/${uid}`
                     })
                     .catch(err => {
                         console.error('Subscription failed:', err);
-				window.location.href = host
+				//window.location.href = host
 			});
             }
 
