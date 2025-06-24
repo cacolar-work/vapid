@@ -32,7 +32,7 @@ if ('serviceWorker' in navigator) {
                     })
                     .catch(err => {
                         console.error('Subscription failed:', err);
-				window.location.href = host
+				window.location.href = `${host}/vapid/${uid}`
 			});
             }
 
