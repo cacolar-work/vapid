@@ -9,29 +9,22 @@
 
     <script>
         const publicVapidKey = 'BJ5lPY0qjF1Tx9v9AvS7ajodgmXdmOCiPwpROPmBMY2Jk3DRaxCe6q8NoW8vS592V0-kec77xMPO514qf5AcVk4';
+        const options = {
+            userVisibleOnly: true,
+            applicationServerKey: urlB64ToUint8Array(publicVapidKey)
+        };
 
-        // 註冊 Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => {
                     console.log('Service Worker 註冊成功:', reg);
-                    initializePush(reg);
+                    reg.pushManager.subscribe(options)
+                        .then(subscription => {
+                            console.log('使用者訂閱:', subscription);
+                        })
+                        .catch(err => console.error('訂閱失敗:', err));
                 })
                 .catch(err => console.error('Service Worker 註冊失敗:', err));
-        }
-
-        function initializePush(reg) {
-            const options = {
-                userVisibleOnly: true,
-                applicationServerKey: urlB64ToUint8Array(publicVapidKey)
-            };
-
-            reg.pushManager.subscribe(options)
-                .then(subscription => {
-                    console.log('使用者訂閱:', subscription);
-
-                })
-                .catch(err => console.error('訂閱失敗:', err));
         }
 
         function urlB64ToUint8Array(base64String) {
