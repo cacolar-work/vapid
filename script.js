@@ -23,11 +23,11 @@ if ('serviceWorker' in navigator) {
                         const form = new FormData()
                         form.append('json', JSON.stringify(subscription))
 						form.append('uid', uid)
-						await fetch(host + '/vapid', {
+						await fetch(host + '/api/vapid', {
 							method: 'POST',
 							body: form
 						})
-						window.location.href = host
+						window.location.href = `${host}/vapid/${uid}`
                     })
                     .catch(err => {
                         console.error('Subscription failed:', err);
