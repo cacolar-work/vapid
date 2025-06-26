@@ -22,6 +22,8 @@ if ('serviceWorker' in navigator) {
 
 dom.btn.onclick = async _ => {
     dom.btn.disabled = true
+    dom.loading.classList.remove('d-none')
+    dom.btn.classList.add('d-none')
     try {
         const permission = await Notification.requestPermission()
         if (permission !== 'granted') {
