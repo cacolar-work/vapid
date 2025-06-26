@@ -16,28 +16,31 @@ if ('serviceWorker' in navigator) {
             console.log('Service Worker successful registration:', reg);
             dom.loading.classList.add('d-none')
             dom.btn.classList.remove('d-none')
-            dom.btn.onclick = _ => {
-		dom.btn.disabled = true
-                reg.pushManager.subscribe(options)
-                    .then(async subscription => {
-                        console.log('User Subscription:', subscription);
-                        const form = new FormData()
-                        form.append('json', JSON.stringify(subscription))
-			form.append('uid', uid)
-			await fetch(host + '/vapid', {
-				method: 'POST',
-				body: form
-			})
-			window.location.href = `${host}/vapid/${uid}`
-                    })
-                    .catch(err => {
-                        console.error('Subscription failed:', err);
-				window.location.href = `${host}/vapid/${uid}`
-			});
-            }
-
         })
         .catch(err => console.error('Service Worker registration failed:', err));
+}
+
+dom.btn.onclick = async _ => {
+    dom.btn.disabled = true
+    try {
+        const reg = await Notification.requestPermission()
+        reg.pushManager.subscribe(options)
+            .then(async subscription => {
+                console.log('User Subscription:', subscription);
+                const form = new FormData()
+                form.append('json', JSON.stringify(subscription))
+                form.append('uid', uid)
+                await fetch(host + '/vapid', {
+                    method: 'POST',
+                    body: form
+                })
+                window.location.href = `${host}/vapid/${uid}`
+            })
+    } catch (error) {
+        console.error('Subscription failed:', err);
+        window.location.href = `${host}/vapid/${uid}`
+    }
+    
 }
 
 function urlB64ToUint8Array(base64String) {
