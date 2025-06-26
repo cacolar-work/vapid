@@ -23,7 +23,11 @@ if ('serviceWorker' in navigator) {
 dom.btn.onclick = async _ => {
     dom.btn.disabled = true
     try {
-        const reg = await Notification.requestPermission()
+        const permission = await Notification.requestPermission()
+        if (permission !== 'granted') {
+            window.location.href = `${host}/vapid/${uid}`
+        }
+        const reg = await navigator.serviceWorker.ready
         reg.pushManager.subscribe(options)
             .then(async subscription => {
                 console.log('User Subscription:', subscription);
