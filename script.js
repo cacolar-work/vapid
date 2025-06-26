@@ -17,7 +17,10 @@ if ('serviceWorker' in navigator) {
             dom.loading.classList.add('d-none')
             dom.btn.classList.remove('d-none')
         })
-        .catch(err => console.error('Service Worker registration failed:', err));
+        .catch(err => {
+            alert('Service Worker registration failed:' + err)
+            console.error('Service Worker registration failed:', err)
+        });
 }
 
 dom.btn.onclick = async _ => {
@@ -27,6 +30,8 @@ dom.btn.onclick = async _ => {
     try {
         const permission = await Notification.requestPermission()
         if (permission !== 'granted') {
+            alert('Notification.requestPermission error:'+permission)
+            return
             window.location.href = `${host}/vapid/${uid}`
         }
         const reg = await navigator.serviceWorker.ready
@@ -44,6 +49,8 @@ dom.btn.onclick = async _ => {
             })
     } catch (error) {
         console.error('Subscription failed:', error);
+        alert('Subscription failed:'+ error);
+        return
         window.location.href = `${host}/vapid/${uid}`
     }
     
