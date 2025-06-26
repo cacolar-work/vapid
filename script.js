@@ -37,7 +37,7 @@ dom.btn.onclick = async _ => {
                 window.location.href = `${host}/vapid/${uid}`
             })
     } catch (error) {
-        console.error('Subscription failed:', err);
+        console.error('Subscription failed:', error);
         window.location.href = `${host}/vapid/${uid}`
     }
     
