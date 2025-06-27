@@ -84,3 +84,8 @@ if ('serviceWorker' in navigator) {
 }
 
 dom.btn.onclick = subscribeUser;
+
+/** 返回PWA重整畫面避免空白 */
+window.onbeforeunload = function() {
+    window.location.reload();
+};
