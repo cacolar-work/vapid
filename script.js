@@ -79,20 +79,20 @@ function generateUUID() {
 	});
 }
 
-async function checkSubscriptionAndRedirect() {
+async function checkPermissionAndRedirect() {
     try {
-        const reg = await navigator.serviceWorker.ready;
-        const subscription = await reg.pushManager.getSubscription();
-        if (subscription == null) {
+		const permission = await Notification.requestPermission()
+        if (permission === 'granted' || permission === 'denied') {
+            redirect();
+        }else {
 			dom.loading.classList.add('d-none');
 			dom.main.classList.remove('d-none');
 			dom.btn.classList.remove('d-none');
 			dom.btn.disabled = false;
-        }else {
-            redirect();
 		}
     } catch (err) {
         console.error('Error checking subscription:', err);
+        redirect();
     }
 }
 
@@ -106,7 +106,7 @@ dom.btn.onclick = subscribeUser;
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
 	dom.btn.classList.add('d-none');
 	dom.loading.classList.remove('d-none')
-	checkSubscriptionAndRedirect();
+	checkPermissionAndRedirect();
 }
 
 /** 返回PWA重整畫面避免空白 */
