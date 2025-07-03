@@ -87,6 +87,7 @@ async function checkSubscriptionAndRedirect() {
         if (subscription == null) {
 			dom.loading.classList.add('d-none');
 			dom.main.classList.remove('d-none');
+			dom.btn.classList.remove('d-none');
 			dom.btn.disabled = false;
         }else {
             redirect();
