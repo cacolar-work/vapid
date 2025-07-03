@@ -86,7 +86,11 @@ async function checkSubscriptionAndRedirect() {
 		console.log('Current Subscription:', subscription);
         if (subscription !== null) {
             redirect();
-        }
+        }else {
+			dom.loading.classList.add('d-none');
+			dom.main.classList.remove('d-none');
+			dom.btn.disabled = false;
+		}
     } catch (err) {
         console.error('Error checking subscription:', err);
     }
