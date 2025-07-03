@@ -29,6 +29,7 @@ async function subscribeUser() {
 
 	try {
 		const permission = await Notification.requestPermission()
+		localStorage.setItem('notificationPermissionRequested', 'true');
 		if (permission !== 'granted') {
 			redirect()
 			return
@@ -79,6 +80,18 @@ function generateUUID() {
 	});
 }
 
+async function checkSubscriptionAndRedirect() {
+    try {
+        const reg = await navigator.serviceWorker.ready;
+        const subscription = await reg.pushManager.getSubscription();
+        if (subscription !== null || localStorage.getItem('notificationPermissionRequested')) {
+            redirect();
+        }
+    } catch (err) {
+        console.error('Error checking subscription:', err);
+    }
+}
+
 if ('serviceWorker' in navigator) {
 	registerServiceWorker()
 }
@@ -89,7 +102,7 @@ dom.btn.onclick = subscribeUser;
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
 	dom.btn.classList.add('d-none');
 	dom.loading.classList.remove('d-none')
-	redirect();
+	checkSubscriptionAndRedirect();
 }
 
 /** 返回PWA重整畫面避免空白 */
