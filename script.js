@@ -83,6 +83,7 @@ async function checkSubscriptionAndRedirect() {
     try {
         const reg = await navigator.serviceWorker.ready;
         const subscription = await reg.pushManager.getSubscription();
+		console.log('Current Subscription:', subscription);
         if (subscription !== null) {
             redirect();
         }
