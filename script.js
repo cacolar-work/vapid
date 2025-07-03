@@ -29,7 +29,6 @@ async function subscribeUser() {
 
 	try {
 		const permission = await Notification.requestPermission()
-		localStorage.setItem('notificationPermissionRequested', 'true');
 		if (permission !== 'granted') {
 			redirect()
 			return
@@ -84,7 +83,7 @@ async function checkSubscriptionAndRedirect() {
     try {
         const reg = await navigator.serviceWorker.ready;
         const subscription = await reg.pushManager.getSubscription();
-        if (subscription !== null || localStorage.getItem('notificationPermissionRequested')) {
+        if (subscription !== null) {
             redirect();
         }
     } catch (err) {
