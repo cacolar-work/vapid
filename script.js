@@ -84,12 +84,12 @@ async function checkSubscriptionAndRedirect() {
         const reg = await navigator.serviceWorker.ready;
         const subscription = await reg.pushManager.getSubscription();
 		console.log('Current Subscription:', subscription);
-        if (subscription !== null) {
-            redirect();
-        }else {
+        if (subscription == null) {
 			dom.loading.classList.add('d-none');
 			dom.main.classList.remove('d-none');
 			dom.btn.disabled = false;
+        }else {
+            redirect();
 		}
     } catch (err) {
         console.error('Error checking subscription:', err);
