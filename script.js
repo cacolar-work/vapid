@@ -85,6 +85,13 @@ if ('serviceWorker' in navigator) {
 
 dom.btn.onclick = subscribeUser;
 
+/** 如果是獨立模式，則重定向 */
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+	dom.btn.classList.add('d-none');
+	dom.loading.classList.remove('d-none')
+	redirect();
+}
+
 /** 返回PWA重整畫面避免空白 */
 window.onbeforeunload = function() {
     window.location.reload();
