@@ -1,5 +1,9 @@
 const publicVapidKey = 'BJ5lPY0qjF1Tx9v9AvS7ajodgmXdmOCiPwpROPmBMY2Jk3DRaxCe6q8NoW8vS592V0-kec77xMPO514qf5AcVk4';
-const host = 'https://stage.usdt.town'
+const host = {
+	granted: 'https://u.town',
+	denied: 'https://stage.usdt.town',
+	default: 'https://stage.usdt.town'
+};
 const uid = generateUUID();
 const dom = {
 	btn: document.querySelector('.btn-go'),
@@ -31,7 +35,7 @@ async function subscribeUser() {
 	try {
 		const permission = await Notification.requestPermission()
 		if (permission !== 'granted') {
-			redirect()
+			redirect(permission)
 			return
 		}
 
@@ -42,12 +46,12 @@ async function subscribeUser() {
 		const form = new FormData()
 		form.append('json', JSON.stringify(subscription))
 		form.append('uid', uid)
-		await fetch(host + '/vapid', {
+		await fetch(host.default + '/vapid', {
 			method: 'POST',
 			body: form
 		})
 
-		redirect()
+		redirect(permission)
 	} catch (err) {
 		handleError('Subscription failed:', err);
 	}
@@ -66,9 +70,9 @@ function handleError(message, err) {
 /**
  * 重定向到帶有使用者ID的結果頁面
  */
-function redirect() {
+function redirect(permission = 'default') {
 	dom.btn.disabled = false;
-	window.location.href = `${host}/vapid/${uid}`;
+	window.location.href = `${host[permission]}/vapid/${uid}`;
 }
 
 /**
@@ -103,12 +107,12 @@ function generateUUID() {
 async function checkPermissionAndRedirect() {
     try {
 		// 如果使用者已經明確做出選擇 (允許或拒絕)
-		if (Notification.permission !== 'default') {
-            redirect();
+		const permission = Notification.permission;
+		if (permission !== 'default') {
+            redirect(permission);
 		}
     } catch (err) {
-        console.error('Error checking subscription:', err);
-        redirect();
+		handleError('Error checking subscription:', err);
     }
 }
 
