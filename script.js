@@ -75,6 +75,7 @@ async function checkPermissionAndRedirect() {
     try {
 		const permission = await Notification.requestPermission()
         if (permission === 'granted' || permission === 'denied') {
+			alert(permission)
             redirect();
 		}
     } catch (err) {
