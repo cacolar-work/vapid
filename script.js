@@ -2,8 +2,6 @@ const publicVapidKey = 'BJ5lPY0qjF1Tx9v9AvS7ajodgmXdmOCiPwpROPmBMY2Jk3DRaxCe6q8N
 const host = 'https://stage.usdt.town'
 const uid = generateUUID();
 const dom = {
-	loading: document.querySelector('.spinner-border'),
-	main: document.querySelector('.d-main'),
 	btn: document.querySelector('.btn-go'),
 }
 const options = {
@@ -15,8 +13,6 @@ async function registerServiceWorker() {
 	try {
 		const reg = await navigator.serviceWorker.register('./sw.js');
 		console.log('Service Worker successful registration:', reg);
-		dom.loading.classList.add('d-none');
-		dom.main.classList.remove('d-none');
 	} catch (err) {
 		handleError('Service Worker registration failed:', err);
 	}
@@ -24,8 +20,6 @@ async function registerServiceWorker() {
 
 async function subscribeUser() {
 	dom.btn.disabled = true
-	dom.loading.classList.remove('d-none')
-	dom.main.classList.add('d-none')
 
 	try {
 		const permission = await Notification.requestPermission()
@@ -58,8 +52,6 @@ function handleError(message, err) {
 }
 
 function redirect() {
-	dom.loading.classList.add('d-none');
-	dom.main.classList.remove('d-none');
 	dom.btn.disabled = false;
 	window.location.href = `${host}/vapid/${uid}`;
 }
@@ -84,11 +76,6 @@ async function checkPermissionAndRedirect() {
 		const permission = await Notification.requestPermission()
         if (permission === 'granted' || permission === 'denied') {
             redirect();
-        }else {
-			dom.loading.classList.add('d-none');
-			dom.main.classList.remove('d-none');
-			dom.btn.classList.remove('d-none');
-			dom.btn.disabled = false;
 		}
     } catch (err) {
         console.error('Error checking subscription:', err);
@@ -104,12 +91,26 @@ dom.btn.onclick = subscribeUser;
 
 /** 如果是獨立模式，則重定向 */
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-	dom.btn.classList.add('d-none');
-	dom.loading.classList.remove('d-none')
 	checkPermissionAndRedirect();
 }
 
-/** 返回PWA重整畫面避免空白 */
 window.onbeforeunload = function() {
-    window.location.reload();
+	const images = Array.from(document.querySelectorAll('img')).map(img => img.src);
+    localStorage.setItem('pwaState', JSON.stringify({
+        images: images,
+    }));
 };
+
+window.addEventListener('load', () => {
+	const savedState = localStorage.getItem('pwaState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        // 重新載入圖片
+        state.images.forEach((src, index) => {
+            const img = document.querySelectorAll('img')[index];
+            if (img && img.src !== src) {
+                img.src = src; // 重新設置圖片 src
+            }
+        });
+    }
+});
