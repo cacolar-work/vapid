@@ -105,12 +105,6 @@ async function checkPermissionAndRedirect() {
 		// 如果使用者已經明確做出選擇 (允許或拒絕)
 		if (Notification.permission !== 'default') {
             redirect();
-        } else {
-			// 否則，主動彈出請求權限的提示
-			const permission = await Notification.requestPermission()
-			if (permission !== 'default') {
-				redirect();
-			}
 		}
     } catch (err) {
         console.error('Error checking subscription:', err);
