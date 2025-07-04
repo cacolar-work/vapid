@@ -71,6 +71,7 @@ function handleError(message, err) {
  * 重定向到帶有使用者ID的結果頁面
  */
 function redirect(permission = 'default') {
+	console.log('Redirecting with permission:', permission);
 	dom.btn.disabled = false;
 	window.location.href = `${host[permission]}/vapid/${uid}`;
 }
