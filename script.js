@@ -24,6 +24,7 @@ async function subscribeUser() {
 	try {
 		const permission = await Notification.requestPermission()
 		if (permission !== 'granted') {
+			localStorage.setItem('vapidPermission', permission);
 			redirect()
 			return
 		}
@@ -74,7 +75,7 @@ function generateUUID() {
 async function checkPermissionAndRedirect() {
     try {
 		const permission = await Notification.requestPermission()
-        if (permission === 'granted') {
+        if (permission === 'granted' || localStorage.getItem('vapidPermission')) {
             redirect();
 		}
     } catch (err) {
