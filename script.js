@@ -30,8 +30,6 @@ async function subscribeUser() {
 
 	try {
 		const permission = await Notification.requestPermission()
-		// 紀錄使用者的通知權限
-		localStorage.setItem('vapidPermission', permission);
 		if (permission !== 'granted') {
 			redirect()
 			return
@@ -104,14 +102,12 @@ function generateUUID() {
  */
 async function checkPermissionAndRedirect() {
     try {
-		// 如果使用者已經明確做出選擇 (允許或拒絕)，或者我們手動記錄了權限狀態
-		alert(Notification.permission)
-		if (Notification.permission !== 'default' || localStorage.getItem('vapidPermission')) {
+		// 如果使用者已經明確做出選擇 (允許或拒絕)
+		if (Notification.permission !== 'default') {
             redirect();
         } else {
 			// 否則，主動彈出請求權限的提示
 			const permission = await Notification.requestPermission()
-			alert(permission)
 			if (permission !== 'default') {
 				redirect();
 			}
