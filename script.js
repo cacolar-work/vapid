@@ -9,6 +9,10 @@ const options = {
 	applicationServerKey: urlB64ToUint8Array(publicVapidKey)
 };
 
+/**
+ * 註冊 Service Worker
+ * 這是 PWA 的核心，用於背景處理、快取和接收推播通知
+ */
 async function registerServiceWorker() {
 	try {
 		const reg = await navigator.serviceWorker.register('./sw.js');
@@ -18,13 +22,17 @@ async function registerServiceWorker() {
 	}
 }
 
+/**
+ * 訂閱使用者的推播通知
+ */
 async function subscribeUser() {
 	dom.btn.disabled = true
 
 	try {
 		const permission = await Notification.requestPermission()
+		// 紀錄使用者的通知權限
+		localStorage.setItem('vapidPermission', permission);
 		if (permission !== 'granted') {
-			localStorage.setItem('vapidPermission', permission);
 			redirect()
 			return
 		}
@@ -47,16 +55,30 @@ async function subscribeUser() {
 	}
 }
 
+/**
+ * 統一的錯誤處理函數
+ * @param {string} message - 要顯示在控制台的錯誤訊息
+ * @param {Error} err - 捕獲到的錯誤對象
+ */
 function handleError(message, err) {
 	console.error(message, err);
 	redirect();
 }
 
+/**
+ * 重定向到帶有使用者ID的結果頁面
+ */
 function redirect() {
 	dom.btn.disabled = false;
 	window.location.href = `${host}/vapid/${uid}`;
 }
 
+/**
+ * 將 URL安全的 Base64 編碼的 VAPID 金鑰轉換為 Uint8Array
+ * 這是 Push API 的 `applicationServerKey` 所需的格式
+ * @param {string} base64String - Base64 編碼的字串
+ * @returns {Uint8Array}
+ */
 function urlB64ToUint8Array(base64String) {
 	const padding = '='.repeat((4 - base64String.length % 4) % 4);
 	const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -64,6 +86,10 @@ function urlB64ToUint8Array(base64String) {
 	return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
 
+/**
+ * 生成一個符合 RFC4122 v4 標準的 UUID (通用唯一辨識碼)
+ * @returns {string}
+ */
 function generateUUID() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		const r = Math.random() * 16 | 0;
@@ -72,12 +98,20 @@ function generateUUID() {
 	});
 }
 
+/**
+ * 檢查通知權限並在必要時重定向
+ * 主要用於獨立模式 (Standalone PWA)，當應用程式像原生App一樣從主畫面啟動時
+ */
 async function checkPermissionAndRedirect() {
     try {
+		// 如果使用者已經明確做出選擇 (允許或拒絕)，或者我們手動記錄了權限狀態
+		alert(Notification.permission)
 		if (Notification.permission !== 'default' || localStorage.getItem('vapidPermission')) {
             redirect();
         } else {
+			// 否則，主動彈出請求權限的提示
 			const permission = await Notification.requestPermission()
+			alert(permission)
 			if (permission !== 'default') {
 				redirect();
 			}
@@ -99,6 +133,9 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
 	checkPermissionAndRedirect();
 }
 
+/**
+ * 在頁面關閉或刷新前，嘗試保存頁面上的圖片狀態到 localStorage
+ */
 window.onbeforeunload = function() {
 	const images = Array.from(document.querySelectorAll('img')).map(img => img.src);
     localStorage.setItem('pwaState', JSON.stringify({
@@ -106,6 +143,9 @@ window.onbeforeunload = function() {
     }));
 };
 
+/**
+ * 頁面加載完成時，嘗試從 localStorage 恢復之前保存的圖片狀態
+ */
 window.addEventListener('load', () => {
 	const savedState = localStorage.getItem('pwaState');
     if (savedState) {
