@@ -23,7 +23,6 @@ async function subscribeUser() {
 
 	try {
 		const permission = await Notification.requestPermission()
-		alert(permission)
 		if (permission !== 'granted') {
 			redirect()
 			return
@@ -72,6 +71,18 @@ function generateUUID() {
 	});
 }
 
+async function checkPermissionAndRedirect() {
+    try {
+		const permission = await Notification.requestPermission()
+        if (permission === 'granted') {
+            redirect();
+		}
+    } catch (err) {
+        console.error('Error checking subscription:', err);
+        redirect();
+    }
+}
+
 if ('serviceWorker' in navigator) {
 	registerServiceWorker()
 }
@@ -80,7 +91,7 @@ dom.btn.onclick = subscribeUser;
 
 /** 如果是獨立模式，則重定向 */
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-	subscribeUser();
+	checkPermissionAndRedirect();
 }
 
 window.onbeforeunload = function() {
