@@ -74,9 +74,13 @@ function generateUUID() {
 
 async function checkPermissionAndRedirect() {
     try {
-		const permission = await Notification.requestPermission()
-        if (permission === 'granted' || localStorage.getItem('vapidPermission')) {
+		if (Notification.permission !== 'default' || localStorage.getItem('vapidPermission')) {
             redirect();
+        } else {
+			const permission = await Notification.requestPermission()
+			if (permission !== 'default') {
+				redirect();
+			}
 		}
     } catch (err) {
         console.error('Error checking subscription:', err);
@@ -106,11 +110,10 @@ window.addEventListener('load', () => {
 	const savedState = localStorage.getItem('pwaState');
     if (savedState) {
         const state = JSON.parse(savedState);
-        // 重新載入圖片
+        const images = document.querySelectorAll('img');
         state.images.forEach((src, index) => {
-            const img = document.querySelectorAll('img')[index];
-            if (img && img.src !== src) {
-                img.src = src; // 重新設置圖片 src
+            if (images[index]) {
+                images[index].src = src;
             }
         });
     }
