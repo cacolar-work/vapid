@@ -106,6 +106,7 @@ function generateUUID() {
  * 主要用於獨立模式 (Standalone PWA)，當應用程式像原生App一樣從主畫面啟動時
  */
 async function checkPermissionAndRedirect() {
+	console.log('checkPermissionAndRedirect')
     try {
 		// 如果使用者已經明確做出選擇 (允許或拒絕)
 		const permission = Notification.permission;
@@ -154,3 +155,18 @@ window.addEventListener('load', () => {
         });
     }
 });
+
+/* window.addEventListener('beforeinstallprompt', e => {
+	e.preventDefault()
+	console.log('stop install')
+	deferredPrompt = e
+}) */
+/** 安裝WEBAPP */
+function deferredPromptAccept(){
+	deferredPrompt.prompt()
+	deferredPrompt.userChoice.then(function (result) {
+		if (result.outcome === 'accepted') {
+			deferredPrompt = null
+		}
+	})
+}
