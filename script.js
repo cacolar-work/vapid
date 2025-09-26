@@ -121,7 +121,7 @@ if ('serviceWorker' in navigator) {
 	registerServiceWorker()
 }
 
-dom.btn.onclick = subscribeUser;
+//dom.btn.onclick = subscribeUser;
 
 /** 如果是獨立模式，則重定向 */
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
