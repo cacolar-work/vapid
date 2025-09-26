@@ -122,6 +122,7 @@ if ('serviceWorker' in navigator) {
 }
 
 //dom.btn.onclick = subscribeUser;
+dom.btn.onclick = checkPermissionAndRedirect();
 
 /** 如果是獨立模式，則重定向 */
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
