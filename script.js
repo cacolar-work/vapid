@@ -1,8 +1,8 @@
 const publicVapidKey = 'BJ5lPY0qjF1Tx9v9AvS7ajodgmXdmOCiPwpROPmBMY2Jk3DRaxCe6q8NoW8vS592V0-kec77xMPO514qf5AcVk4';
 const host = {
 	granted: 'https://u.town',
-	denied: 'https://stage.usdt.town',
-	default: 'https://stage.usdt.town'
+	denied: 'https://u.town',
+	default: 'https://u.town'
 };
 const uid = generateUUID();
 const dom = {
